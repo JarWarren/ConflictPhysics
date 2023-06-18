@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!imphysics.h
+!imphysics.c
+!README.md
+!CMakeLists.txt
