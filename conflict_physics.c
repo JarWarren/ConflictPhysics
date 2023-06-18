@@ -112,8 +112,6 @@ void conflict_solve(CflBody *bodies, uint32_t count) {
             }
             if (isDetection) continue;
             conflict_collide(a, b, dx / distance * overlap, dy / distance * overlap);
-        } else if (a->collider.type == CFL_COLLIDER_TYPE_CIRCLE && b->collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
-
         } else if (a->collider.type == CFL_COLLIDER_TYPE_RECTANGLE && b->collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
             float overlapX = 0;
             float overlapY = 0;
@@ -151,8 +149,53 @@ void conflict_solve(CflBody *bodies, uint32_t count) {
                     conflict_collide(a, b, 0, overlapY);
                 }
             }
-        } else if (a->collider.type == CFL_COLLIDER_TYPE_RECTANGLE && b->collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
+        } else {
+            CflBody *circle;
+            CflBody *rectangle;
+            if (a->collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
+                circle = a;
+                rectangle = b;
+            } else {
+                circle = b;
+                rectangle = a;
+            }
 
+            float nearestX;
+            float nearestY;
+            if (circle->x < rectangle->x) {
+                nearestX = rectangle->x;
+            } else if (circle->x > rectangle->x + rectangle->collider.value.rectangle.width) {
+                nearestX = rectangle->x + rectangle->collider.value.rectangle.width;
+            } else {
+                nearestX = circle->x;
+            }
+
+            if (circle->y < rectangle->y) {
+                nearestY = rectangle->y;
+            } else if (circle->y > rectangle->y + rectangle->collider.value.rectangle.height) {
+                nearestY = rectangle->y + rectangle->collider.value.rectangle.height;
+            } else {
+                nearestY = circle->y;
+            }
+
+            float dx = circle->x - nearestX;
+            float dy = circle->y - nearestY;
+            float distance = sqrtf(dx * dx + dy * dy);
+            float overlap = circle->collider.value.circle.radius - distance;
+            if (overlap <= 0) continue;
+
+            bool isDetection = false;
+            if ((a->detectionMask & b->categoryMask) != 0 && a->onTrigger != NULL) {
+                a->onTrigger(b);
+                isDetection = true;
+            }
+            if ((b->detectionMask & a->categoryMask) != 0 && b->onTrigger != NULL) {
+                b->onTrigger(a);
+                isDetection = true;
+            }
+            if (isDetection) continue;
+
+            conflict_collide(a, b, dx / distance * overlap, dy / distance * overlap);
         }
     }
 }
