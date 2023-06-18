@@ -8,3 +8,5 @@
 !README.md
 !CMakeLists.txt
 !tests
+!tests/CMakeLists.txt
+!tests/main.c

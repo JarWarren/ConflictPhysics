@@ -8,7 +8,44 @@ typedef struct Cfl1DCollision {
     uint32_t b;
 } Cfl1DCollision;
 
-static void conflict_collide(CflBody *a, CflBody *b, float x, float y) {
+CflBody cflCircle(float x, float y, float radius) {
+    CflBody body;
+    body.x = x;
+    body.y = y;
+    body.isStatic = false;
+    body.collider.type = CFL_COLLIDER_TYPE_CIRCLE;
+    body.collider.value.circle.radius = radius;
+    body.onTrigger = NULL;
+    body.categoryMask = 0;
+    body.collisionMask = 0;
+    body.detectionMask = 0;
+    body.isEnabled = true;
+    body.isOnCeiling = false;
+    body.isOnFloor = false;
+    body.isOnWall = false;
+    return body;
+}
+
+CflBody cflRectangle(float x, float y, float width, float height) {
+    CflBody body;
+    body.x = x;
+    body.y = y;
+    body.isStatic = false;
+    body.collider.type = CFL_COLLIDER_TYPE_RECTANGLE;
+    body.collider.value.rectangle.width = width;
+    body.collider.value.rectangle.height = height;
+    body.onTrigger = NULL;
+    body.categoryMask = 0;
+    body.collisionMask = 0;
+    body.detectionMask = 0;
+    body.isEnabled = true;
+    body.isOnCeiling = false;
+    body.isOnFloor = false;
+    body.isOnWall = false;
+    return body;
+}
+
+static void cflResolve(CflBody *a, CflBody *b, float x, float y) {
     if (!a->isStatic && !b->isStatic) {
         a->x -= x / 2;
         a->y -= y / 2;
@@ -36,7 +73,7 @@ static void conflict_collide(CflBody *a, CflBody *b, float x, float y) {
     }
 }
 
-void conflict_solve(CflBody *bodies, uint32_t count) {
+void cflSolve(CflBody *bodies, uint32_t count) {
     if (count < 2) return;
 
     // broad phase - sweep and prune
@@ -111,7 +148,7 @@ void conflict_solve(CflBody *bodies, uint32_t count) {
                 isDetection = true;
             }
             if (isDetection) continue;
-            conflict_collide(a, b, dx / distance * overlap, dy / distance * overlap);
+            cflResolve(a, b, dx / distance * overlap, dy / distance * overlap);
         } else if (a->collider.type == CFL_COLLIDER_TYPE_RECTANGLE && b->collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
             float overlapX = 0;
             float overlapY = 0;
@@ -138,15 +175,15 @@ void conflict_solve(CflBody *bodies, uint32_t count) {
             if (isDetection) continue;
             if (overlapX < overlapY) {
                 if (a->x < b->x) {
-                    conflict_collide(a, b, -overlapX, 0);
+                    cflResolve(a, b, -overlapX, 0);
                 } else {
-                    conflict_collide(a, b, overlapX, 0);
+                    cflResolve(a, b, overlapX, 0);
                 }
             } else {
                 if (a->y < b->y) {
-                    conflict_collide(a, b, 0, -overlapY);
+                    cflResolve(a, b, 0, -overlapY);
                 } else {
-                    conflict_collide(a, b, 0, overlapY);
+                    cflResolve(a, b, 0, overlapY);
                 }
             }
         } else {
@@ -195,7 +232,7 @@ void conflict_solve(CflBody *bodies, uint32_t count) {
             }
             if (isDetection) continue;
 
-            conflict_collide(a, b, dx / distance * overlap, dy / distance * overlap);
+            cflResolve(a, b, dx / distance * overlap, dy / distance * overlap);
         }
     }
 }

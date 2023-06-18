@@ -40,8 +40,8 @@ struct CflBody {
     bool isOnWall;
 };
 
-// TODO: body creation helper functions
-
-void conflict_solve(CflBody* bodies, uint32_t count);
+CflBody cflCircle(float x, float y, float radius);
+CflBody cflRectangle(float x, float y, float width, float height);
+void cflSolve(CflBody* bodies, uint32_t count);
 
 #endif //IMPHYSICS_H
