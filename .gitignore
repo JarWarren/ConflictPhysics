@@ -3,7 +3,7 @@
 
 # But not these files...
 !.gitignore
-!imphysics.h
-!imphysics.c
+!conflict_physics.h
+!conflict_physics.c
 !README.md
 !CMakeLists.txt

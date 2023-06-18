@@ -1,16 +1,25 @@
-# ImPhysics
+# Conflict Physics
 
-Immediate-mode physics library
+Collision and overlap detection for 2D/3D games.
+
+Many games don't need a full physics engine - they just need to know when two objects collide or overlap.
+Don't mess with acceleration, friction, mass, forces or even delta time.
+Just move your bodies directly and Conflict will resolve "conflicts".
 
 ## Features
-- Collision and overlap detection
+- 2D or 3D
+- C99 and no dependencies
 - Dead easy to use
-- No dependencies
-- Written in C99
 
-## Usage
+## Internally Managed Bodies
+Let Conflict manage your bodies for you.
 ```c
-#include "imphysics.h"
+#include "conflict_physics.h"
+```
 
-// TODO
+## Manually Managed Bodies
+You own the bodies and Conflict just tells you when they conflict.
+Good for when you want to use ecs or a custom allocator.
+```c
+#include "conflict_physics.h"
 ```
