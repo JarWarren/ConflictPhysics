@@ -1,9 +1,10 @@
 # Conflict Physics
 
-Collision and overlap detection for 2D/3D games.
+Collision and overlap detection.
 
-Many games don't need a full physics engine - they just need to know when two objects collide or overlap.
+Many games don't need a full physics engine - they need to know when objects collide or overlap.
 Don't mess with acceleration, friction, mass, forces or even delta time.
+
 Just move your bodies directly and Conflict will resolve "conflicts".
 
 ## Features
