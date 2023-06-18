@@ -4,20 +4,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef enum ImBodyType ImBodyType;
-typedef struct ImBody ImBody;
-typedef struct ImCollider ImCollider;
-typedef void (*ImPhysicsTriggerCallback)(ImBody* trigger);
+typedef enum CflBodyType CflBodyType;
+typedef struct CflBody CflBody;
+typedef struct CflCollider CflCollider;
+typedef void (*CflPhysicsTriggerCallback)(CflBody* trigger);
 
-enum ImBodyType {
-    IM_BODY_TYPE_STATIC,
-    IM_BODY_TYPE_DYNAMIC,
-};
-
-struct ImCollider {
+struct CflCollider {
     enum {
-        IM_COLLIDER_TYPE_CIRCLE,
-        IM_COLLIDER_TYPE_RECTANGLE,
+        CFL_COLLIDER_TYPE_CIRCLE,
+        CFL_COLLIDER_TYPE_RECTANGLE,
     } type;
     union {
         struct {
@@ -30,24 +25,23 @@ struct ImCollider {
     } value;
 };
 
-struct ImBody {
-    ImBodyType type;
-    ImCollider collider;
-    ImPhysicsTriggerCallback onTrigger;
+struct CflBody {
+    float x;
+    float y;
+    bool isStatic;
+    CflCollider collider;
+    CflPhysicsTriggerCallback onTrigger;
+    uint32_t categoryMask;
+    uint32_t collisionMask;
+    uint32_t detectionMask;
     bool isEnabled;
     bool isOnCeiling;
     bool isOnFloor;
-    bool isOnLeftWall;
-    bool isOnRightWall;
-    float x;
-    float y;
-    uint32_t categoryMask;
-    uint32_t collisionMask;
-    uint32_t triggerMask;
+    bool isOnWall;
 };
 
 // TODO: body creation helper functions
 
-void imphysics_solve(ImBody* bodies, uint32_t count);
+void conflict_solve(CflBody* bodies, uint32_t count);
 
 #endif //IMPHYSICS_H

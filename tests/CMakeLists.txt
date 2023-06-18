@@ -1,0 +1,2 @@
+add_executable(ConflictPhysicsTests main.c)
+target_link_libraries(ConflictPhysicsTests ConflictPhysics)

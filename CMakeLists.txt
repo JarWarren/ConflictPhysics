@@ -4,3 +4,4 @@ project(ConflictPhysics C)
 set(CMAKE_C_STANDARD 90)
 
 add_library(ConflictPhysics conflict_physics.c)
+add_subdirectory(tests)
