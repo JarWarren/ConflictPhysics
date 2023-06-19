@@ -7,7 +7,7 @@
 typedef enum CflBodyType CflBodyType;
 typedef struct CflBody CflBody;
 typedef struct CflCollider CflCollider;
-typedef void (*CflPhysicsTriggerCallback)(CflBody* self, CflBody* trigger);
+typedef void (*CflPhysicsTriggerCallback)(CflBody* self, CflBody* detected);
 
 struct CflCollider {
     enum {
@@ -30,7 +30,7 @@ struct CflBody {
     float y;
     bool isStatic;
     CflCollider collider;
-    CflPhysicsTriggerCallback onTrigger;
+    CflPhysicsTriggerCallback onDetection;
     uint32_t categoryMask;
     uint32_t collisionMask;
     uint32_t detectionMask;

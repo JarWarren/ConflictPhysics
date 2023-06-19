@@ -13,53 +13,75 @@ enum {
     CATEGORY_COIN = 1 << 2,
 };
 
-void coinOnTrigger(CflBody* self, CflBody* trigger) {
+void coinOnDetection(CflBody *self, CflBody *detected) {
+    if (detected->categoryMask != CATEGORY_PLAYER) return;
     score++;
     self->isEnabled = false;
 }
 
 int main(void) {
     CflBody bodies[COUNT];
-
+    int i = 0;
     // player
 //    bodies[0] = cflCircle(100, 100, 10);
-    bodies[0] = cflRectangle(100, 100, 20, 20);
-    bodies[0].categoryMask = CATEGORY_PLAYER;
-    bodies[0].collisionMask = CATEGORY_WALL;
-    bodies[0].detectionMask = CATEGORY_COIN;
+    bodies[i] = cflRectangle(100, 100, 20, 20);
+    bodies[i].categoryMask = CATEGORY_PLAYER;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].detectionMask = CATEGORY_COIN;
+    i++;
+    // walls
+    bodies[i] = cflRectangle(0, 400, 800, 50);
+    bodies[i].isStatic = true;
+    bodies[i].categoryMask = CATEGORY_WALL;
+    i++;
 
-    // floor
-    bodies[1] = cflRectangle(0, 400, 800, 50);
-    bodies[1].isStatic = true;
-    bodies[1].categoryMask = CATEGORY_WALL;
+    bodies[i] = cflRectangle(0, 0, 50, 450);
+    bodies[i].isStatic = true;
+    bodies[i].categoryMask = CATEGORY_WALL;
+    i++;
+
+    bodies[i] = cflRectangle(750, 0, 50, 450);
+    bodies[i].isStatic = true;
+    bodies[i].categoryMask = CATEGORY_WALL;
+    i++;
+
+    bodies[i] = cflRectangle(0, 0, 800, 50);
+    bodies[i].isStatic = true;
+    bodies[i].categoryMask = CATEGORY_WALL;
+    i++;
 
     // obstacles
-    bodies[2] = cflRectangle(200, 200, 100, 100);
-    bodies[2].categoryMask = CATEGORY_WALL;
-    bodies[2].collisionMask = CATEGORY_WALL;
+    bodies[i] = cflRectangle(200, 200, 100, 100);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
 
-    bodies[3] = cflRectangle(400, 300, 50, 50);
-    bodies[3].categoryMask = CATEGORY_WALL;
-    bodies[3].collisionMask = CATEGORY_WALL;
+    bodies[i] = cflRectangle(400, 300, 50, 50);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
 
-    bodies[4] = cflRectangle(500, 300, 50, 50);
-    bodies[4].categoryMask = CATEGORY_WALL;
-    bodies[4].collisionMask = CATEGORY_WALL;
+    bodies[i] = cflRectangle(500, 300, 50, 50);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
 
-    bodies[5] = cflCircle(600, 300, 25);
-    bodies[5].categoryMask = CATEGORY_WALL;
-    bodies[5].collisionMask = CATEGORY_WALL;
+    bodies[i] = cflCircle(600, 300, 25);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
 
-    bodies[6] = cflCircle(700, 300, 25);
-    bodies[6].categoryMask = CATEGORY_WALL;
-    bodies[6].collisionMask = CATEGORY_WALL;
+    bodies[i] = cflCircle(700, 300, 25);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
 
     // coins
-    for (int i = 7; i < COUNT; i++) {
-        bodies[i] = cflCircle((float)i * 40, (float)GetRandomValue(200, 400), 10);
+    for (; i < COUNT; i++) {
+        bodies[i] = cflCircle((float) i * 40, (float) GetRandomValue(200, 400), 10);
         bodies[i].categoryMask = CATEGORY_COIN;
         bodies[i].detectionMask = CATEGORY_PLAYER;
-        bodies[i].onTrigger = coinOnTrigger;
+        bodies[i].onDetection = coinOnDetection;
     }
 
     InitWindow(800, 450, "conflict_physics test");
@@ -78,14 +100,14 @@ int main(void) {
         if (IsKeyDown(KEY_DOWN)) {
             bodies[0].y += SPEED;
         }
-        if (IsKeyDown(KEY_SPACE) && bodies[0].isOnFloor) {
-            velocity = -5;
-        }
-        velocity += 0.1f;
-        bodies[0].y += velocity;
-        if (velocity > 5) {
-            velocity = 5;
-        }
+//        if (IsKeyDown(KEY_SPACE) && bodies[0].isOnFloor) {
+//            velocity = -5;
+//        }
+//        velocity += 0.1f;
+//        bodies[0].y += velocity;
+//        if (velocity > 5) {
+//            velocity = 5;
+//        }
 
         cflSolve(bodies, COUNT);
         BeginDrawing();
@@ -104,12 +126,13 @@ int main(void) {
         }
 
 //        DrawCircle((int) bodies[0].x, (int) bodies[0].y, bodies[0].collider.value.circle.radius, SKYBLUE);
-        DrawRectangle((int)bodies[0].x, (int)bodies[0].y, (int)bodies[0].collider.value.rectangle.width, (int)bodies[0].collider.value.rectangle.height, playerColor);
-        for (int i = 1; i < COUNT; i++) {
+        DrawRectangle((int) bodies[0].x, (int) bodies[0].y, (int) bodies[0].collider.value.rectangle.width,
+                      (int) bodies[0].collider.value.rectangle.height, playerColor);
+        for (i = 1; i < COUNT; i++) {
             if (!bodies[i].isEnabled) continue;
             if (bodies[i].collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
                 Color color = bodies[i].categoryMask == CATEGORY_COIN ? YELLOW : PINK;
-                DrawCircle((int) bodies[i].x, (int) bodies[i].y, bodies[i].collider.value.circle.radius,color);
+                DrawCircle((int) bodies[i].x, (int) bodies[i].y, bodies[i].collider.value.circle.radius, color);
             } else if (bodies[i].collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
                 DrawRectangle((int) bodies[i].x, (int) bodies[i].y, (int) bodies[i].collider.value.rectangle.width,
                               (int) bodies[i].collider.value.rectangle.height, PINK);
