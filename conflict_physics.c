@@ -59,7 +59,7 @@ static void cflResolve(CflBody *a, CflBody *b, float x, float y) {
         b->y -= y;
     }
 
-    if (y > 0) {
+    if (y < 0) {
         a->isOnFloor = true;
         b->isOnCeiling = true;
     } else if (y < 0) {
@@ -144,11 +144,11 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             if (overlap <= 0) continue;
             bool isDetection = false;
             if ((a->detectionMask & b->categoryMask) != 0 && a->onTrigger != NULL) {
-                a->onTrigger(b);
+                a->onTrigger(a, b);
                 isDetection = true;
             }
             if ((b->detectionMask & a->categoryMask) != 0 && b->onTrigger != NULL) {
-                b->onTrigger(a);
+                b->onTrigger(b, a);
                 isDetection = true;
             }
             if (isDetection) continue;
@@ -169,11 +169,11 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             if (overlapX <= 0 || overlapY <= 0) continue;
             bool isDetection = false;
             if ((a->detectionMask & b->categoryMask) != 0 && a->onTrigger != NULL) {
-                a->onTrigger(b);
+                a->onTrigger(a, b);
                 isDetection = true;
             }
             if ((b->detectionMask & a->categoryMask) != 0 && b->onTrigger != NULL) {
-                b->onTrigger(a);
+                b->onTrigger(b, a);
                 isDetection = true;
             }
             if (isDetection) continue;
@@ -227,11 +227,11 @@ void cflSolve(CflBody *bodies, uint32_t count) {
 
             bool isDetection = false;
             if ((a->detectionMask & b->categoryMask) != 0 && a->onTrigger != NULL) {
-                a->onTrigger(b);
+                a->onTrigger(a, b);
                 isDetection = true;
             }
             if ((b->detectionMask & a->categoryMask) != 0 && b->onTrigger != NULL) {
-                b->onTrigger(a);
+                b->onTrigger(b, a);
                 isDetection = true;
             }
             if (isDetection) continue;

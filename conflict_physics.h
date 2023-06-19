@@ -7,7 +7,7 @@
 typedef enum CflBodyType CflBodyType;
 typedef struct CflBody CflBody;
 typedef struct CflCollider CflCollider;
-typedef void (*CflPhysicsTriggerCallback)(CflBody* trigger);
+typedef void (*CflPhysicsTriggerCallback)(CflBody* self, CflBody* trigger);
 
 struct CflCollider {
     enum {
