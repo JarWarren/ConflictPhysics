@@ -193,10 +193,12 @@ void cflSolve(CflBody *bodies, uint32_t count) {
         } else {
             CflBody *circle;
             CflBody *rectangle;
+            bool isReversed = false;
             if (a->collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
                 circle = a;
                 rectangle = b;
             } else {
+                isReversed = true;
                 circle = b;
                 rectangle = a;
             }
@@ -223,7 +225,7 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             float dy = circle->y - nearestY;
             float distance = sqrtf(dx * dx + dy * dy);
             float overlap = circle->collider.value.circle.radius - distance;
-            if (overlap <= 0) continue;
+            if (overlap <= 0 || distance == 0) continue;
 
             bool isDetection = false;
             if ((a->detectionMask & b->categoryMask) != 0 && a->onDetection != NULL) {
@@ -236,7 +238,12 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             }
             if (isDetection) continue;
 
-            cflResolve(a, b, dx / distance * overlap, dy / distance * overlap);
+            cflResolve(
+                isReversed ? b : a,
+                isReversed ? a : b,
+                dx / distance * overlap,
+                dy / distance * overlap
+            );
         }
     }
 }

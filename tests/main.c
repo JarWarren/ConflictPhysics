@@ -23,12 +23,12 @@ int main(void) {
     CflBody bodies[COUNT];
     int i = 0;
     // player
-//    bodies[0] = cflCircle(100, 100, 10);
-    bodies[i] = cflRectangle(100, 100, 20, 20);
+    bodies[0] = cflCircle(100, 100, 10);
     bodies[i].categoryMask = CATEGORY_PLAYER;
     bodies[i].collisionMask = CATEGORY_WALL;
     bodies[i].detectionMask = CATEGORY_COIN;
     i++;
+
     // walls
     bodies[i] = cflRectangle(0, 400, 800, 50);
     bodies[i].isStatic = true;
@@ -77,8 +77,9 @@ int main(void) {
     i++;
 
     // coins
+    int offset = i;
     for (; i < COUNT; i++) {
-        bodies[i] = cflCircle((float) i * 40, (float) GetRandomValue(200, 400), 10);
+        bodies[i] = cflCircle((float) (i - offset / 2) * 40, (float) GetRandomValue(200, 400), 10);
         bodies[i].categoryMask = CATEGORY_COIN;
         bodies[i].detectionMask = CATEGORY_PLAYER;
         bodies[i].onDetection = coinOnDetection;
@@ -94,20 +95,24 @@ int main(void) {
         if (IsKeyDown(KEY_RIGHT)) {
             bodies[0].x += SPEED;
         }
-        if (IsKeyDown(KEY_UP)) {
+        if (IsKeyDown(KEY_UP) && (bodies[0].isOnWall || bodies[0].isOnCeiling)) {
             bodies[0].y -= SPEED;
         }
         if (IsKeyDown(KEY_DOWN)) {
             bodies[0].y += SPEED;
         }
-//        if (IsKeyDown(KEY_SPACE) && bodies[0].isOnFloor) {
-//            velocity = -5;
-//        }
-//        velocity += 0.1f;
-//        bodies[0].y += velocity;
-//        if (velocity > 5) {
-//            velocity = 5;
-//        }
+        if (IsKeyDown(KEY_SPACE) && (bodies[0].isOnFloor || bodies[0].isOnWall)) {
+            velocity = -5;
+        }
+        velocity += 0.1f;
+        if (!bodies[0].isOnWall && !bodies[0].isOnCeiling) {
+            bodies[0].y += velocity;
+        } else {
+            velocity = 0;
+        }
+        if (velocity > 5) {
+            velocity = 5;
+        }
 
         cflSolve(bodies, COUNT);
         BeginDrawing();
@@ -125,9 +130,7 @@ int main(void) {
             playerColor = BLUE;
         }
 
-//        DrawCircle((int) bodies[0].x, (int) bodies[0].y, bodies[0].collider.value.circle.radius, SKYBLUE);
-        DrawRectangle((int) bodies[0].x, (int) bodies[0].y, (int) bodies[0].collider.value.rectangle.width,
-                      (int) bodies[0].collider.value.rectangle.height, playerColor);
+        DrawCircle((int) bodies[0].x, (int) bodies[0].y, bodies[0].collider.value.circle.radius, playerColor);
         for (i = 1; i < COUNT; i++) {
             if (!bodies[i].isEnabled) continue;
             if (bodies[i].collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
