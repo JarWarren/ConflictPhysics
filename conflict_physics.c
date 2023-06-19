@@ -47,16 +47,16 @@ CflBody cflRectangle(float x, float y, float width, float height) {
 
 static void cflResolve(CflBody *a, CflBody *b, float x, float y) {
     if (!a->isStatic && !b->isStatic) {
-        a->x -= x / 2;
-        a->y -= y / 2;
-        b->x += x / 2;
-        b->y += y / 2;
+        a->x += x / 2;
+        a->y += y / 2;
+        b->x -= x / 2;
+        b->y -= y / 2;
     } else if (!a->isStatic) {
-        a->x -= x;
-        a->y -= y;
+        a->x += x;
+        a->y += y;
     } else if (!b->isStatic) {
-        b->x += x;
-        b->y += y;
+        b->x -= x;
+        b->y -= y;
     }
 
     if (y > 0) {
@@ -80,8 +80,8 @@ void cflSolve(CflBody *bodies, uint32_t count) {
     Cfl1DCollision collisions1D[count * count];
     uint32_t collisions1DCount = 0;
 
-    uint32_t i = 0;
-    uint32_t j = 0;
+    uint32_t i;
+    uint32_t j;
     for (i = 0; i < count; i++) {
         CflBody *a = &bodies[i];
         if (!a->isEnabled) continue;
@@ -116,8 +116,12 @@ void cflSolve(CflBody *bodies, uint32_t count) {
                     bMaxX = b->x + b->collider.value.rectangle.width;
                     break;
             }
-            if ((a->collisionMask & b->categoryMask) == 0 && (a->detectionMask & b->categoryMask) == 0) continue;
-            if ((b->collisionMask & a->categoryMask) == 0 && (b->detectionMask & a->categoryMask) == 0) continue;
+
+            if ((a->collisionMask & b->categoryMask) == 0 &&
+                (a->detectionMask & b->categoryMask) == 0 &&
+                (b->collisionMask & a->categoryMask) == 0 &&
+                (b->detectionMask & a->categoryMask) == 0)
+                continue;
 
             if (aMinX < bMaxX && aMaxX > bMinX) {
                 collisions1D[collisions1DCount].a = i;
@@ -150,8 +154,8 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             if (isDetection) continue;
             cflResolve(a, b, dx / distance * overlap, dy / distance * overlap);
         } else if (a->collider.type == CFL_COLLIDER_TYPE_RECTANGLE && b->collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
-            float overlapX = 0;
-            float overlapY = 0;
+            float overlapX;
+            float overlapY;
             if (a->x < b->x) {
                 overlapX = a->x + a->collider.value.rectangle.width - b->x;
             } else {
