@@ -14,7 +14,6 @@ enum {
 };
 
 void coinOnDetection(CflBody *self, CflBody *detected) {
-    if (detected->categoryMask != CATEGORY_PLAYER) return;
     score++;
     self->isEnabled = false;
 }
@@ -51,6 +50,11 @@ int main(void) {
     i++;
 
     // obstacles
+    bodies[i] = cflCircle(100, 250, 25);
+    bodies[i].categoryMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL;
+    i++;
+
     bodies[i] = cflRectangle(200, 200, 100, 100);
     bodies[i].categoryMask = CATEGORY_WALL;
     bodies[i].collisionMask = CATEGORY_WALL;
@@ -103,11 +107,7 @@ int main(void) {
             velocity = -4;
         }
         velocity += 0.1f;
-        if (!bodies[0].isOnCeiling) {
-            bodies[0].y += velocity;
-        } else {
-            velocity = 0;
-        }
+        bodies[0].y += velocity;
         if (velocity > 4) {
             velocity = 4;
         }
@@ -148,7 +148,7 @@ int main(void) {
         }
 
         DrawFPS(12, 12);
-        DrawText(TextFormat("Score: %i", score), 700, 12, 20, LIME);
+        DrawText(TextFormat("Score: %i", score), 700, 12, 20, BLACK);
         EndDrawing();
     }
 
