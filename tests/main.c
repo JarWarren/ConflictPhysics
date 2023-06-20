@@ -23,7 +23,7 @@ int main(void) {
     CflBody bodies[COUNT];
     int i = 0;
     // player
-    bodies[0] = cflCircle(100, 100, 10);
+    bodies[0] = cflCircle(100, 100, 15);
     bodies[i].categoryMask = CATEGORY_PLAYER;
     bodies[i].collisionMask = CATEGORY_WALL;
     bodies[i].detectionMask = CATEGORY_COIN;
@@ -77,12 +77,13 @@ int main(void) {
     i++;
 
     // coins
-    int offset = i;
+    float offset = 100;
     for (; i < COUNT; i++) {
-        bodies[i] = cflCircle((float) (i - offset / 2) * 40, (float) GetRandomValue(200, 400), 10);
+        bodies[i] = cflCircle(offset, (float) GetRandomValue(75, 375), 8);
         bodies[i].categoryMask = CATEGORY_COIN;
         bodies[i].detectionMask = CATEGORY_PLAYER;
         bodies[i].onDetection = coinOnDetection;
+        offset += 50;
     }
 
     InitWindow(800, 450, "conflict_physics test");
@@ -98,28 +99,22 @@ int main(void) {
         if (IsKeyDown(KEY_UP) && (bodies[0].isOnWall || bodies[0].isOnCeiling)) {
             bodies[0].y -= SPEED;
         }
-        if (IsKeyDown(KEY_DOWN)) {
-            bodies[0].y += SPEED;
-        }
         if (IsKeyDown(KEY_SPACE) && (bodies[0].isOnFloor || bodies[0].isOnWall)) {
-            velocity = -5;
+            velocity = -4;
         }
         velocity += 0.1f;
-        if (!bodies[0].isOnWall && !bodies[0].isOnCeiling) {
+        if (!bodies[0].isOnCeiling) {
             bodies[0].y += velocity;
         } else {
             velocity = 0;
         }
-        if (velocity > 5) {
-            velocity = 5;
+        if (velocity > 4) {
+            velocity = 4;
         }
 
         cflSolve(bodies, COUNT);
         BeginDrawing();
         ClearBackground(DARKGRAY);
-        DrawFPS(12, 12);
-        // Draw score
-        DrawText(TextFormat("Score: %i", score), 700, 12, 20, LIME);
 
         Color playerColor = SKYBLUE;
         if (bodies[0].isOnFloor) {
@@ -135,12 +130,25 @@ int main(void) {
             if (!bodies[i].isEnabled) continue;
             if (bodies[i].collider.type == CFL_COLLIDER_TYPE_CIRCLE) {
                 Color color = bodies[i].categoryMask == CATEGORY_COIN ? YELLOW : PINK;
-                DrawCircle((int) bodies[i].x, (int) bodies[i].y, bodies[i].collider.value.circle.radius, color);
+                DrawCircle(
+                    (int) bodies[i].x,
+                    (int) bodies[i].y,
+                    bodies[i].collider.value.circle.radius,
+                    color
+                );
             } else if (bodies[i].collider.type == CFL_COLLIDER_TYPE_RECTANGLE) {
-                DrawRectangle((int) bodies[i].x, (int) bodies[i].y, (int) bodies[i].collider.value.rectangle.width,
-                              (int) bodies[i].collider.value.rectangle.height, PINK);
+                DrawRectangle(
+                    (int) bodies[i].x,
+                    (int) bodies[i].y,
+                    (int) bodies[i].collider.value.rectangle.width,
+                    (int) bodies[i].collider.value.rectangle.height,
+                    PINK
+                );
             }
         }
+
+        DrawFPS(12, 12);
+        DrawText(TextFormat("Score: %i", score), 700, 12, 20, LIME);
         EndDrawing();
     }
 
