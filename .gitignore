@@ -7,6 +7,6 @@
 !conflict_physics.c
 !README.md
 !CMakeLists.txt
-!tests
-!tests/CMakeLists.txt
-!tests/main.c
+!example
+!example/CMakeLists.txt
+!example/main.c

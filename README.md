@@ -35,3 +35,9 @@ int main(void) {
     yourTerminate();
 }
 ```
+
+## Example
+ - `mkdir build && cd build`
+ - `cmake ..`
+ - `make`
+ - `./example/ConflictPhysicsExample`
