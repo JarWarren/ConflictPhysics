@@ -53,32 +53,32 @@ int main(void) {
     // obstacles
     bodies[i] = cflCircle(100, 250, 25);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     bodies[i] = cflRectangle(200, 200, 100, 100);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     bodies[i] = cflRectangle(400, 300, 50, 50);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     bodies[i] = cflRectangle(500, 300, 50, 50);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     bodies[i] = cflCircle(600, 300, 25);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     bodies[i] = cflCircle(700, 300, 25);
     bodies[i].categoryMask = CATEGORY_OBSTACLE;
-    bodies[i].collisionMask = CATEGORY_WALL;
+    bodies[i].collisionMask = CATEGORY_WALL | CATEGORY_OBSTACLE;
     i++;
 
     // coins

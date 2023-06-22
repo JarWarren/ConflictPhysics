@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 typedef struct Cfl1DCollision {
     uint32_t a;
@@ -77,7 +78,8 @@ void cflSolve(CflBody *bodies, uint32_t count) {
     if (count < 2) return;
 
     // broad phase - sweep and prune
-    Cfl1DCollision collisions1D[count * count];
+    uint32_t collision1DCapacity = count * 2;
+    Cfl1DCollision* collisions1D = malloc(sizeof(Cfl1DCollision) * collision1DCapacity);
     uint32_t collisions1DCount = 0;
 
     uint32_t i;
@@ -124,6 +126,10 @@ void cflSolve(CflBody *bodies, uint32_t count) {
                 continue;
 
             if (aMinX < bMaxX && aMaxX > bMinX) {
+                if (collisions1DCount == collision1DCapacity) {
+                    collision1DCapacity *= 2;
+                    collisions1D = (Cfl1DCollision*)realloc(collisions1D, collision1DCapacity * sizeof(Cfl1DCollision));
+                }
                 collisions1D[collisions1DCount].a = i;
                 collisions1D[collisions1DCount].b = j;
                 collisions1DCount++;
@@ -246,4 +252,5 @@ void cflSolve(CflBody *bodies, uint32_t count) {
             );
         }
     }
+    free(collisions1D);
 }
