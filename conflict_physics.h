@@ -1,5 +1,5 @@
-#ifndef IMPHYSICS_H
-#define IMPHYSICS_H
+#ifndef CONFLICT_PHYSICS_H
+#define CONFLICT_PHYSICS_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -44,4 +44,4 @@ CflBody cflCircle(float x, float y, float radius);
 CflBody cflRectangle(float x, float y, float width, float height);
 void cflSolve(CflBody* bodies, uint32_t count);
 
-#endif //IMPHYSICS_H
+#endif // CONFLICT_PHYSICS_H
