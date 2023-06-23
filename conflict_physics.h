@@ -38,6 +38,7 @@ struct CflBody {
     bool isOnCeiling;
     bool isOnFloor;
     bool isOnWall;
+    void* userData;
 };
 
 CflBody cflCircle(float x, float y, float radius);
